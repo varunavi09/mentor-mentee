@@ -7,7 +7,7 @@ try {
     const port = window.location && window.location.port;
     // If running on a non-5000 port (e.g., 3000 for CRA), assume backend on 5000
     if (port && port !== '5000') {
-      DEFAULT_DEV_API = 'http://localhost:5000';
+      DEFAULT_DEV_API = 'https://mentor-mentee-ba9b.onrender.com/';
     }
   }
 } catch (_) {
