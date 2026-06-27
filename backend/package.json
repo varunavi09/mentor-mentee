@@ -1,0 +1,22 @@
+{
+  "name": "mentor-connect-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Mentor Connect",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "seed": "node seedDatabase.js",
+    "cleanup": "node cleanup.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "mongoose": "^8.19.1",
+    "morgan": "^1.10.1",
+    "socket.io": "^4.8.1"
+  }
+}
