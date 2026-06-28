@@ -11,13 +11,7 @@ const MentorBookings = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  useEffect(() => {
-  fetchBookings();
-}, [fetchBookings]);
-
-  useEffect(() => {
-  filterBookings();
-}, [filterBookings]);
+ 
 
   const fetchBookings = useCallback(async () => {
   try {
@@ -37,6 +31,13 @@ const MentorBookings = ({ user }) => {
     setFilteredBookings(bookings.filter(b => b.status === filter));
   }
 }, [filter, bookings]);
+ useEffect(() => {
+  fetchBookings();
+}, [fetchBookings]);
+
+  useEffect(() => {
+  filterBookings();
+}, [filterBookings]);
 
   const handleBookingAction = async (bookingId, status) => {
     try {
