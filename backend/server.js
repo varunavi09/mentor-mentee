@@ -9,16 +9,29 @@ const { Server } = require('socket.io');
 const app = express();
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://your-frontend-name.vercel.app"
+];
+
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE']
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true
   }
 });
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
+app.use(express.json());
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(morgan('dev'));
 
