@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../shared/LoadingSpinner';
 import { apiJson } from '../../utils/api';
@@ -11,14 +11,11 @@ const MentorDashboard = ({ user }) => {
     completedSessions: 0,
     availableSlots: 0
   });
+
   const [recentBookings, setRecentBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [user.id]);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const [bookings, availability] = await Promise.all([
         apiJson(`/api/mentor/bookings/${user.id}`),
@@ -39,7 +36,11 @@ const MentorDashboard = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   if (loading) {
     return <LoadingSpinner message="Loading dashboard..." />;

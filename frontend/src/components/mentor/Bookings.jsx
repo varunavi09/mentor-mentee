@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../shared/LoadingSpinner';
 import { apiJson, apiFetch } from '../../utils/api';
@@ -12,31 +12,31 @@ const MentorBookings = ({ user }) => {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
-    fetchBookings();
-  }, [user.id]);
+  fetchBookings();
+}, [fetchBookings]);
 
   useEffect(() => {
-    filterBookings();
-  }, [filter, bookings]);
+  filterBookings();
+}, [filterBookings]);
 
-  const fetchBookings = async () => {
-    try {
-      const data = await apiJson(`/api/mentor/bookings/${user.id}`);
-      setBookings(data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-      setLoading(false);
-    }
-  };
+  const fetchBookings = useCallback(async () => {
+  try {
+    const data = await apiJson(`/api/mentor/bookings/${user.id}`);
+    setBookings(data);
+    setLoading(false);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    setLoading(false);
+  }
+}, [user.id]);
 
-  const filterBookings = () => {
-    if (filter === 'all') {
-      setFilteredBookings(bookings);
-    } else {
-      setFilteredBookings(bookings.filter(b => b.status === filter));
-    }
-  };
+  const filterBookings = useCallback(() => {
+  if (filter === 'all') {
+    setFilteredBookings(bookings);
+  } else {
+    setFilteredBookings(bookings.filter(b => b.status === filter));
+  }
+}, [filter, bookings]);
 
   const handleBookingAction = async (bookingId, status) => {
     try {

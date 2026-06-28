@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch, API_BASE } from '../utils/api';
 import { io } from 'socket.io-client';
@@ -25,7 +25,7 @@ const VideoCall = ({ user }) => {
       return;
     }
     fetchBookingDetails();
-  }, [bookingId, user, navigate]);
+    }, [user, navigate, fetchBookingDetails]);
 
   useEffect(() => {
     if (booking) {
@@ -57,7 +57,14 @@ const VideoCall = ({ user }) => {
         }
       };
     }
-  }, [booking]);
+  }, [
+  booking,
+  bookingId,
+  loadJitsiMeet,
+  user.id,
+  user.name,
+  user.role
+]);
 
   useEffect(() => {
     scrollToBottom();
@@ -70,29 +77,31 @@ const VideoCall = ({ user }) => {
     }
   };
 
-  const fetchBookingDetails = async () => {
-    try {
-      const response = await apiFetch(`/api/booking/${bookingId}`);
-      if (!response.ok) {
-        throw new Error('Booking not found');
-      }
-      const data = await response.json();
-      setBooking(data);
-    } catch (error) {
-      console.error('Error fetching booking:', error);
-      alert('Failed to load session details');
-      navigate(-1);
-    }
-  };
+  const fetchBookingDetails = useCallback(async () => {
+  try {
+    const response = await apiFetch(`/api/booking/${bookingId}`);
 
-  const loadJitsiMeet = () => {
-    // Load Jitsi Meet API script
-    const script = document.createElement('script');
-    script.src = 'https://meet.jit.si/external_api.js';
-    script.async = true;
-    script.onload = () => initializeJitsi();
-    document.body.appendChild(script);
-  };
+    if (!response.ok) {
+      throw new Error('Booking not found');
+    }
+
+    const data = await response.json();
+    setBooking(data);
+  } catch (error) {
+    console.error('Error fetching booking:', error);
+    alert('Failed to load session details');
+    navigate(-1);
+  }
+}, [bookingId, navigate]);
+
+  const loadJitsiMeet = useCallback(() => {
+  const script = document.createElement('script');
+  script.src = 'https://meet.jit.si/external_api.js';
+  script.async = true;
+  script.onload = () => initializeJitsi();
+
+  document.body.appendChild(script);
+}, []);
 
   const initializeJitsi = () => {
     if (!window.JitsiMeetExternalAPI) {
